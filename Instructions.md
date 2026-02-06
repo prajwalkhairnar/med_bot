@@ -8,8 +8,6 @@ Async Instructions:
 
 1 -  Interface with Google and Pinecone and validate data is being returned with the code as-is (Pinecone keys provided)
 
-PINECONE_API_KEY="***REMOVED***"
-PINECONE_INDEX_NAME="***REMOVED***"
 
 2 - Add scope classifier to ensure questions are in scope for a medical chat bot - respond with a hard coded out of scope response if not in scope
 
