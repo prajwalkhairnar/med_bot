@@ -23,12 +23,17 @@ Each task has:
 - Retrieval of relevant medical research papers
 
 ### Task 2: Scope Classifier
-**Status:** PENDING
+**Status:** COMPLETE ✅
 
-**What it will validate:**
-- Classification of medical vs non-medical questions
-- Proper handling of out-of-scope queries
-- Hardcoded response for non-medical questions
+**Files:**
+- `task2-validation.ts`
+- `task2-validation-report.md`
+
+**What it validates:**
+- LLM-based classification of medical vs non-medical questions
+- Proper routing based on query scope
+- Out-of-scope response for non-medical queries
+- 100% success rate across 10 test cases (5 medical, 5 non-medical)
 
 ### Task 3: Query Parser
 **Status:** PENDING

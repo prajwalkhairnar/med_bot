@@ -9,5 +9,6 @@ export const InputStateAnnotation = Annotation.Root({
 export const StateAnnotation = Annotation.Root({
     ...MessagesAnnotation.spec,
 
-    retrievedDocs: Annotation<Document[]>
+    retrievedDocs: Annotation<Document[]>,
+    isMedicalQuery: Annotation<boolean>
 })
