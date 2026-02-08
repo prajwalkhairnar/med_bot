@@ -1,6 +1,7 @@
 import { END, START, StateGraph } from "@langchain/langgraph"
 import { StateAnnotation, InputStateAnnotation } from "./state.js"
-import { respond } from "../nodes/respond.js"
+import { researchSummarizer } from "../nodes/researchSummarizer.js"
+import { responseGenerator } from "../nodes/responseGenerator.js"
 import { vectorSearch } from "../nodes/vectorSearch.js"
 import { noResultsResponse } from "../nodes/noResultsResponse.js"
 import { scopeClassifier } from "../nodes/scopeClassifier.js"
@@ -17,7 +18,8 @@ const builder = new StateGraph({
     .addNode("queryParser", queryParser)
     .addNode("vectorSearch", vectorSearch)
     .addNode("pubmedFetch", pubmedFetch)
-    .addNode("respond", respond)
+    .addNode("researchSummarizer", researchSummarizer)
+    .addNode("responseGenerator", responseGenerator)
     .addNode("noResultsResponse", noResultsResponse)
     .addNode("outOfScopeResponse", outOfScopeResponse)
     .addEdge(START, "scopeClassifier")
@@ -30,10 +32,11 @@ const builder = new StateGraph({
         true: "pubmedFetch",
         false: "noResultsResponse"
     })
-    .addEdge("pubmedFetch", "respond")
+    .addEdge("pubmedFetch", "researchSummarizer")
+    .addEdge("researchSummarizer", "responseGenerator")
     .addEdge("outOfScopeResponse", END)
     .addEdge("noResultsResponse", END)
-    .addEdge("respond", END)
+    .addEdge("responseGenerator", END)
 
 export const graph = builder.compile({
     interruptBefore: [],
