@@ -5,7 +5,8 @@ import { Pinecone } from "@pinecone-database/pinecone"
 import { getMessageText } from "../utils/getMessageText.js"
 
 export async function vectorSearch(state: typeof StateAnnotation.State): Promise<typeof StateAnnotation.Update> {
-    const query = getMessageText(state.messages[state.messages.length - 1])
+    // Use the parsed query if available, otherwise fall back to the original message
+    const query = state.parsedQuery || getMessageText(state.messages[state.messages.length - 1])
 
     const embeddingModel = new VertexAIEmbeddings({ model: "text-embedding-005" })
 
@@ -20,9 +21,19 @@ export async function vectorSearch(state: typeof StateAnnotation.State): Promise
         pineconeIndex
     })
 
-    const retriever = vectorStore.asRetriever({ k: 10 })
+    // Use similaritySearchWithScore to get both documents and their similarity scores
+    const resultsWithScores = await vectorStore.similaritySearchWithScore(query, 10)
 
-    const response = await retriever.invoke(query)
+    // Add the score to each document's metadata
+    const docsWithScores = resultsWithScores.map(([doc, score]) => {
+        return {
+            ...doc,
+            metadata: {
+                ...doc.metadata,
+                score: score
+            }
+        }
+    })
 
-    return { retrievedDocs: response }
+    return { retrievedDocs: docsWithScores }
 }

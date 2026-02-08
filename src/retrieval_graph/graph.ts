@@ -5,21 +5,24 @@ import { vectorSearch } from "../nodes/vectorSearch.js"
 import { noResultsResponse } from "../nodes/noResultsResponse.js"
 import { scopeClassifier } from "../nodes/scopeClassifier.js"
 import { outOfScopeResponse } from "../nodes/outOfScopeResponse.js"
+import { queryParser } from "../nodes/queryParser.js"
 
 const builder = new StateGraph({
     stateSchema: StateAnnotation,
     input: InputStateAnnotation
 })
     .addNode("scopeClassifier", scopeClassifier)
+    .addNode("queryParser", queryParser)
     .addNode("vectorSearch", vectorSearch)
     .addNode("respond", respond)
     .addNode("noResultsResponse", noResultsResponse)
     .addNode("outOfScopeResponse", outOfScopeResponse)
     .addEdge(START, "scopeClassifier")
     .addConditionalEdges("scopeClassifier", (state) => (state.isMedicalQuery).toString(), {
-        true: "vectorSearch",
+        true: "queryParser",
         false: "outOfScopeResponse"
     })
+    .addEdge("queryParser", "vectorSearch")
     .addConditionalEdges("vectorSearch", (state) => (state.retrievedDocs.length > 0).toString(), {
         true: "respond",
         false: "noResultsResponse"
